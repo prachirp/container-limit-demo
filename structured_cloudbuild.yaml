@@ -29,7 +29,7 @@ steps:
   volumes:
   - name: 'kube'
     path: '/kube'
-  - name: '/configs'
+  - name: 'configs'
     path: '/configs'
   env:
   - 'KUBECONFIG=/kube/config'
