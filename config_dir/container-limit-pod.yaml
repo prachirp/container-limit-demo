@@ -9,6 +9,7 @@ spec:
     image: polinux/stress
     resources:
       limits:
+        cpu: "200m"
         memory: "200Mi"
       requests:
         memory: "100Mi"
