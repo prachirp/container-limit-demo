@@ -24,6 +24,11 @@ steps:
   timeout: 30s
 - name: 'bash'
   args: ['chmod', '775', '/workspace']
+- name: 'bash'
+  args: ['chmod', '775', '/configs']
+  volumes:
+  - name: 'configs'
+    path: '/configs'
 - name: 'gcr.io/config-management-release/nomos:stable'
   args: ['nomos', 'hydrate', '--path', '/workspace/structured_config_dir', '--output', '/configs/hydrated_configs']
   volumes:
