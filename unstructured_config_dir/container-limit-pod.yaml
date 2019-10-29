@@ -1,15 +1,14 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: memory-demo
-  namespace: mem-example
+  name: container-limit-demo
+  namespace: lim-example
 spec:
   containers:
-  - name: memory-demo-ctr
+  - name: container-limit-demo-ctr
     image: polinux/stress
     resources:
       limits:
-        cpu: "200m"
         memory: "200Mi"
       requests:
         memory: "100Mi"

@@ -15,15 +15,27 @@ steps:
   - name: 'kube'
     path: '/kube'
 - name: 'gcr.io/config-management-release/nomos:stable'
-  args: ['nomos', 'vet', '--path', '/workspace/config_dir', '--disable-hierarchy']
+  args: ['nomos', 'vet', '--path', '/workspace/structured_config_dir']
   volumes:
   - name: 'kube'
     path: '/kube'
   env:
   - 'KUBECONFIG=/kube/config'
   timeout: 30s
+- name: 'bash'
+  args: ['chmod', '775', '/workspace']
+- name: 'gcr.io/config-management-release/nomos:stable'
+  args: ['nomos', 'hydrate', '--path', '/workspace/structured_config_dir', '--output', '/configs/hydrated_configs']
+  volumes:
+  - name: 'kube'
+    path: '/kube'
+  - name: '/configs'
+    path: '/configs'
+  env:
+  - 'KUBECONFIG=/kube/config'
+  timeout: 30s
 - name: 'gcr.io/konduct-demo/source-yaml-dir:dev'
-  args: ['--input', '/dev/null', '--source_dir', '/workspace/config_dir', '--output', '/configs/sourceOutput.yaml']
+  args: ['--input', '/dev/null', '--source_dir', '/configs/hydratedConfigs', '--output', '/configs/sourceOutput.yaml']
   volumes:
   - name: 'configs'
     path: '/configs'
