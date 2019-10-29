@@ -1,0 +1,39 @@
+steps:
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['config', 'current-context']
+  volumes:
+  - name: 'kube'
+    path: '/kube'
+  env:
+  - 'KUBECONFIG=/kube/config'
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=demo-cluster-1'
+  - 'CLOUDSDK_CONTAINER_USE_APPLICATION_DEFAULT_CREDENTIALS=true'
+- name: 'bash'
+  args: ['chmod', '444', '/kube/config']
+  volumes:
+  - name: 'kube'
+    path: '/kube'
+- name: 'gcr.io/config-management-release/nomos:stable'
+  args: ['nomos', 'vet', '--path', '/workspace/unstructured_config_dir', '--disable-hierarchy']
+  volumes:
+  - name: 'kube'
+    path: '/kube'
+  env:
+  - 'KUBECONFIG=/kube/config'
+  timeout: 30s
+- name: 'gcr.io/konduct-demo/source-yaml-dir:dev'
+  args: ['--input', '/dev/null', '--source_dir', '/workspace/unstructured_config_dir', '--output', '/configs/sourceOutput.yaml']
+  volumes:
+  - name: 'configs'
+    path: '/configs'
+- name: 'gcr.io/konduct-demo/gatekeeper-validate:latest'
+  args: ['--input', '/configs/sourceOutput.yaml', '--output', '/configs/gatekeeperOutput.yaml']
+  volumes:
+  - name: 'configs'
+    path: '/configs'
+- name: 'bash'
+  args: ['cat', '/configs/gatekeeperOutput.yaml']
+  volumes:
+  - name: 'configs'
+    path: '/configs'
