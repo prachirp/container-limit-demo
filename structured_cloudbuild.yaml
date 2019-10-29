@@ -40,17 +40,17 @@ steps:
   - 'KUBECONFIG=/kube/config'
   timeout: 30s
 - name: 'gcr.io/konduct-demo/source-yaml-dir:dev'
-  args: ['--input', '/dev/null', '--source_dir', '/configs/hydratedConfigs', '--output', '/configs/sourceOutput.yaml']
+  args: ['--input', '/dev/null', '--source_dir', '/configs/hydrated_configs', '--output', '/configs/source_output.yaml']
   volumes:
   - name: 'configs'
     path: '/configs'
 - name: 'gcr.io/konduct-demo/gatekeeper-validate:latest'
-  args: ['--input', '/configs/sourceOutput.yaml', '--output', '/configs/gatekeeperOutput.yaml']
+  args: ['--input', '/configs/source_output.yaml', '--output', '/configs/gatekeeper_output.yaml']
   volumes:
   - name: 'configs'
     path: '/configs'
 - name: 'bash'
-  args: ['cat', '/configs/gatekeeperOutput.yaml']
+  args: ['cat', '/configs/gatekeeper_output.yaml']
   volumes:
   - name: 'configs'
     path: '/configs'
